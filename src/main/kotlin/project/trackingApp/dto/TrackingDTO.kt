@@ -1,12 +1,14 @@
 package project.trackingApp.dto
 
+import com.github.michaelbull.result.Result
+import project.trackingApp.error.TrackingError
 import java.time.LocalDateTime
 
 data class TrackingDTO(
     val status: String? = null,
     val poNumber: String? = null,
     val etd: LocalDateTime? = null,
-    val eta: LocalDateTime? = null,
+    val eta: Result<LocalDateTime?, TrackingError.InvalidDateFormat>,
     val atd: LocalDateTime? = null,
     val ata: LocalDateTime? = null,
     val packages: Int? = null,
@@ -21,7 +23,7 @@ data class TrackingDTO(
     val carrier: String? = null,
     val incoTerm: String? = null,
     val flightNo: String? = null,
-    val pickUpDate: LocalDateTime? = null,
+    val pickUpDate: Result<LocalDateTime?, String>,
     val latestCheckpoint: String? = null,
     val sourceFilename: String
 )
