@@ -51,4 +51,5 @@ fun TrackingError.toErrorMessage(): String = when (this) {
     is TrackingError.InvalidTimelineSequence -> "Invalid timeline sequence for $trackingNumber at $date: $event"
     is TrackingError.UnexpectedError -> "Unexpected error: $message"
     is TrackingError.ImportFailed -> "Import failed: $message"
+    is TrackingError.MissingRequiredField -> "Missing required field: $message "
 }

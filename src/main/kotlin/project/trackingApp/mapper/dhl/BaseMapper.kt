@@ -1,5 +1,5 @@
 // BaseMapper.kt
-package project.trackingApp.mapper
+package project.trackingApp.mapper.dhl
 
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
@@ -15,13 +15,18 @@ import java.util.Date
 interface BaseMapper {
     fun map(data: Map<String, String>, filename: String): Result<TrackingDTO, TrackingError>
 
-    fun parseDateTime(value: String?): Result<LocalDateTime?, String> {
+    fun parseDateTime(value: String?, fieldName:String): Result<LocalDateTime?, TrackingError> {
         if (value.isNullOrBlank()) return Ok(null)
 
-        // Handle Excel date format
+
         if (value.contains(".")) {
             val days = value.substringBefore(".").toDoubleOrNull()
-                ?: return Err("Invalid Excel date format: $value")
+                ?: return Err(TrackingError.InvalidDateFormat(
+                    field = fieldName,
+                    value = value,
+                    expectedFormat = "Excel date format"
+                ))
+
             val date = Date(((days - 25569) * 86400000).toLong())
             return Ok(
                 date.toInstant()
@@ -30,13 +35,17 @@ interface BaseMapper {
             )
         }
 
-        // Handle standard date format (M/d/yy)
+
         val formatter = DateTimeFormatter.ofPattern("M/d/yy")
         return runCatching {
             val parsedDate = LocalDate.parse(value, formatter)
             Ok(parsedDate.atStartOfDay())
         }.getOrElse {
-            Err("Invalid standard date format: $value")
+            Err(TrackingError.InvalidDateFormat(
+                field = fieldName,
+                value = value,
+                expectedFormat = "M/d/yy"
+            ))
         }
     }
 }

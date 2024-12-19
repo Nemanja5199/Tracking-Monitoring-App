@@ -1,7 +1,6 @@
 package project.trackingApp.parser
 
 object DHLFields {
-    const val PAYER_ACCOUNT = "Payer Account Number"
     const val PICKUP_DATE = "Pickup Date"
     const val ORIGIN_COUNTRY = "Origin Country/Territory IATA code"
     const val DESTINATION_COUNTRY = "Destination Country/Territory IATA code"
@@ -12,5 +11,5 @@ object DHLFields {
     const val WEIGHT = "Manifested Weight"
     const val ESTIMATED_DELIVERY = "Estimated Delivery Date"
     const val LATEST_CHECKPOINT = "Latest Checkpoint"
-    const val LATEST_CHECKPOINT_DATE = "Latest Checkpoint Date/Time"
+   
 }

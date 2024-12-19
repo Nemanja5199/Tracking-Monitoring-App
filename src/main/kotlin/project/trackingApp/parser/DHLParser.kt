@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.csvParser.TrackingCSVParser
 import project.trackingApp.dto.TrackingDTO
 import project.trackingApp.error.TrackingError
-import project.trackingApp.mapper.DHLMapper
+import project.trackingApp.mapper.dhl.DHLMapper
 
 class DHLParser(
     private val csvParser: TrackingCSVParser,

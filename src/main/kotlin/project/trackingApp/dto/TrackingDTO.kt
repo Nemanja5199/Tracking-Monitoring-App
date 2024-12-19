@@ -8,7 +8,7 @@ data class TrackingDTO(
     val status: String? = null,
     val poNumber: String? = null,
     val etd: LocalDateTime? = null,
-    val eta: Result<LocalDateTime?, TrackingError.InvalidDateFormat>,
+    val eta: LocalDateTime?,
     val atd: LocalDateTime? = null,
     val ata: LocalDateTime? = null,
     val packages: Int? = null,
@@ -23,7 +23,7 @@ data class TrackingDTO(
     val carrier: String? = null,
     val incoTerm: String? = null,
     val flightNo: String? = null,
-    val pickUpDate: Result<LocalDateTime?, String>,
+    val pickUpDate: LocalDateTime?,
     val latestCheckpoint: String? = null,
     val sourceFilename: String
 )

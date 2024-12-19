@@ -1,11 +1,14 @@
 package project.trackingApp.service
 
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.binding
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.csvParser.TrackingCSVParser
 import project.trackingApp.dto.TrackingDTO
-import project.trackingApp.mapper.DHLMapper
+import project.trackingApp.error.TrackingError
+import project.trackingApp.mapper.dhl.DHLMapper
 import project.trackingApp.model.Tracking
 import project.trackingApp.repository.TrackingRepository
 
@@ -17,12 +20,17 @@ class TrackingService(
 ) {
 
     @Transactional
-    fun processFile(file: MultipartFile, provider: String): List<TrackingDTO> {
+    fun processFile(file: MultipartFile, provider: String): Result<List<TrackingDTO>, TrackingError> = binding {
 
-        val records = csvParser.parseFile(file)
-        val dtos = records.map { record ->
-            dhlMapper.map(record, file.originalFilename ?: "unknown")
+        val records = csvParser.parseFile(file).bind()
+
+
+        val dtos = mutableListOf<TrackingDTO>()
+        for (record in records) {
+            val dto = dhlMapper.map(record, file.originalFilename ?: "unknown").bind()
+            dtos.add(dto)
         }
+
 
         val entities = dtos.map { dto ->
             Tracking(
@@ -49,7 +57,8 @@ class TrackingService(
             )
         }
 
+
         trackingRepository.saveAll(entities)
-        return dtos
+        dtos
     }
 }
