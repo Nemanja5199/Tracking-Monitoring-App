@@ -3,6 +3,8 @@ package project.trackingApp.parser
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import org.apache.poi.EncryptedDocumentException
+import org.apache.poi.ss.formula.eval.NotImplementedException
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
@@ -10,6 +12,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.error.TrackingError
+import java.io.IOException
 
 
 @Configuration
@@ -29,7 +32,43 @@ class LogwinParser : ProviderFileParser {
 
             Ok(results)
         }.getOrElse { e ->
-            Err(TrackingError.UnexpectedError("An unexpected error occurred: ${e.message}"))
+            when (e) {
+                is IOException -> Err(
+                    TrackingError.FileParseError(
+                        "Failed to read file: ${e.message}"
+                    )
+                )
+                is IllegalArgumentException -> Err(
+                    TrackingError.InvalidFileFormat(
+                        "Invalid file format: ${e.message}"
+                    )
+                )
+                is EncryptedDocumentException -> Err(
+                    TrackingError.FileParseError(
+                        "File is password protected or encrypted"
+                    )
+                )
+                is NotImplementedException -> Err(
+                    TrackingError.InvalidFileFormat(
+                        "Unsupported Excel feature or formula"
+                    )
+                )
+                is ArrayIndexOutOfBoundsException -> Err(
+                    TrackingError.InvalidFileFormat(
+                        "Invalid sheet or cell reference"
+                    )
+                )
+                is NullPointerException -> Err(
+                    TrackingError.InvalidFileFormat(
+                        "Missing required data in Excel file"
+                    )
+                )
+                else -> Err(
+                    TrackingError.UnexpectedError(
+                        "An unexpected error occurred: ${e.message}"
+                    )
+                )
+            }
         }
     }
 
