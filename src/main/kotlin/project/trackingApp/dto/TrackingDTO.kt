@@ -1,7 +1,6 @@
 package project.trackingApp.dto
 
-import com.github.michaelbull.result.Result
-import project.trackingApp.error.TrackingError
+import project.trackingApp.model.Tracking
 import java.time.LocalDateTime
 
 data class TrackingDTO(
@@ -26,4 +25,27 @@ data class TrackingDTO(
     val pickUpDate: LocalDateTime?,
     val latestCheckpoint: String? = null,
     val sourceFilename: String
+)
+
+fun TrackingDTO.toTracking(): Tracking = Tracking(
+    status = status,
+    poNumber = poNumber,
+    etd = etd,
+    eta = eta,
+    atd = atd,
+    ata = ata,
+    packages = packages,
+    weight = weight,
+    volume = volume,
+    shipper = shipper,
+    shipperCountry = shipperCountry,
+    receiver = receiver,
+    receiverCountry = receiverCountry,
+    houseAwb = houseAwb,
+    shipperRefNo = shipperRefNo,
+    carrier = carrier,
+    incoTerm = incoTerm,
+    flightNo = flightNo,
+    pickUpDate = pickUpDate,
+    latestCheckpoint = latestCheckpoint
 )

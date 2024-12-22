@@ -1,13 +1,15 @@
 package project.trackingApp.mapper.dhl
 
-import com.github.michaelbull.result.*
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.binding
 import project.trackingApp.dto.TrackingDTO
 import project.trackingApp.error.TrackingError
-import project.trackingApp.parser.DHLFields
+import project.trackingApp.mapper.BaseMapper
 
 class DHLMapper : BaseMapper {
     override fun map(data: Map<String, String>, filename: String): Result<TrackingDTO, TrackingError> {
-        // Early validation checks
+
         val latestCheckpoint = data[DHLFields.LATEST_CHECKPOINT]?.takeIf { it.isNotBlank() }
             ?: return Err(TrackingError.MissingRequiredField("Missing required field: latestCheckpoint"))
 
@@ -52,5 +54,4 @@ class DHLMapper : BaseMapper {
 
         return weight.replace("KG", "").trim().toDoubleOrNull()
     }
-
 }

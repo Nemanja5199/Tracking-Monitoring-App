@@ -25,7 +25,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.0")
-    implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("org.apache.poi:poi:5.2.3")
     implementation("org.apache.poi:poi-ooxml:5.2.3")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

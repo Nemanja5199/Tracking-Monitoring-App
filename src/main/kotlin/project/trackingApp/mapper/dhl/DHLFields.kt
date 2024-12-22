@@ -1,4 +1,4 @@
-package project.trackingApp.parser
+package project.trackingApp.mapper.dhl
 
 object DHLFields {
     const val PICKUP_DATE = "Pickup Date"
@@ -11,5 +11,4 @@ object DHLFields {
     const val WEIGHT = "Manifested Weight"
     const val ESTIMATED_DELIVERY = "Estimated Delivery Date"
     const val LATEST_CHECKPOINT = "Latest Checkpoint"
-   
 }

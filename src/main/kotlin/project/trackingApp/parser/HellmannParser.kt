@@ -15,15 +15,15 @@ import project.trackingApp.error.TrackingError
 import java.io.IOException
 
 @Component
-class DhlParser : ProviderFileParser {
+class HellmannParser : ProviderFileParser {
     override fun parseFile(file: MultipartFile): Result<List<Map<String, String>>, TrackingError> {
         return runCatching {
             if (file.isEmpty) return@runCatching Err(TrackingError.FileParseError("File is empty"))
 
             val workbook = WorkbookFactory.create(file.inputStream)
-            val sheet = workbook.getSheetAt(0)
+            val sheet = workbook.getSheetAt(1)
 
-            val headerRow = findDhlHeaderRow(sheet)
+            val headerRow = findHeaderRow(sheet)
             val headers = extractHeaders(sheet.getRow(headerRow))
             val results = parseDataRows(sheet, headerRow, headers)
 
@@ -69,38 +69,35 @@ class DhlParser : ProviderFileParser {
         }
     }
 
-    private fun findDhlHeaderRow(sheet: Sheet): Int {
+    private fun findHeaderRow(sheet: Sheet): Int {
         val potentialHeaders = listOf(
-            "Payer Account Number",
-            "Pickup Date",
-            "Origin Country/Territory",
-            "IATA code",
-            "Origin City",
-            "IATA Code",
-            "Destination Country/Territory",
-            "Destination City",
-            "Waybill Number",
-            "Shipper Reference Number",
-            "Receiver",
-            "Receiver Postal Code",
-            "Product Code",
-            "Pieces",
-            "Piece ID",
-            "Manifested Weight",
-            "Estimated Delivery Date",
-            "Last Checkpoint Code",
-            "Latest Checkpoint Date/Time",
-            "Latest Checkpoint",
-            "Latest Checkpoint's Remarks",
-            "Location of Scan",
-            "Customer Uploaded Comments",
-            "Comments"
+            "Status",
+            "House AWB",
+            "Shipper Name",
+            "Shipper Country",
+            "Consignee Name",
+            "Consignee Country",
+            "Departure Country",
+            "Departure Port",
+            "Destination Country",
+            "Destination Port",
+            "Incoterm",
+            "Flight No",
+            "No of Packages",
+            "Gross Weight (Kg)",
+            "Chargeable Weight (Kg)",
+            "Act. Pick Up",
+            "Flight ETD",
+            "Flight ATD",
+            "Flight ETA",
+            "Flight ATA",
+            "Act. Delivery"
         )
 
         for (rowNum in 0..sheet.lastRowNum) {
             val row = sheet.getRow(rowNum)
             if (row != null) {
-
+                // Convert row to cell values
                 val rowValues = row.map { cell ->
                     when (cell?.cellType) {
                         CellType.STRING -> cell.stringCellValue?.trim() ?: ""
@@ -124,7 +121,6 @@ class DhlParser : ProviderFileParser {
 
         throw IllegalArgumentException("Could not find header row")
     }
-
     private fun extractHeaders(row: Row): List<String> {
         return row.map { cell ->
             when (cell?.cellType) {
@@ -144,8 +140,6 @@ class DhlParser : ProviderFileParser {
 
         for (rowIndex in (headerRow + 1)..sheet.lastRowNum) {
             val dataRow = sheet.getRow(rowIndex) ?: continue
-
-            // Skip empty rows
             if (isRowEmpty(dataRow)) continue
 
             val rowData = parseRowData(dataRow, headers)
@@ -186,3 +180,4 @@ class DhlParser : ProviderFileParser {
         }
     }
 }
+
