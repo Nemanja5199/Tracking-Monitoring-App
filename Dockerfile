@@ -18,7 +18,7 @@ COPY src src
 RUN ./gradlew build -x test
 
 
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:21-jdk-jammy
 
 WORKDIR /app
 
