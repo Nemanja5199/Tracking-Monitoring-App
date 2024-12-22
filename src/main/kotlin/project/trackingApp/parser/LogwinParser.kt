@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.error.TrackingError
 import java.io.IOException
 
-
 @Configuration
 class LogwinParser : ProviderFileParser {
     override fun parseFile(file: MultipartFile): Result<List<Map<String, String>>, TrackingError> {
