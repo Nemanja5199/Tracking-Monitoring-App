@@ -3,10 +3,11 @@ package project.trackingApp.mapper.hellmann
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.binding
+import org.springframework.context.annotation.Configuration
 import project.trackingApp.dto.TrackingDTO
 import project.trackingApp.error.TrackingError
 import project.trackingApp.mapper.BaseMapper
-
+@Configuration
 class HellmannMapper : BaseMapper {
     override fun map(data: Map<String, String>, filename: String): Result<TrackingDTO, TrackingError> {
         val houseAwb = data[HellmannFields.HOUSE_AWB]?.takeIf { it.isNotBlank() }

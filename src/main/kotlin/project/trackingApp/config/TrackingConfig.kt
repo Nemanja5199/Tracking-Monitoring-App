@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import project.trackingApp.mapper.dhl.DHLMapper
 import project.trackingApp.mapper.hellmann.HellmannMapper
+import project.trackingApp.mapper.logwin.LogwinMapper
 
 @Configuration
 class TrackingConfig {
@@ -13,9 +14,13 @@ class TrackingConfig {
         return DHLMapper()
     }
 
+//    @Bean
+//    fun hellmannMapper(): HellmannMapper {
+//        return HellmannMapper()
+//    }
+
     @Bean
-    fun hellmannMapper(): HellmannMapper {
-        return HellmannMapper()
+    fun logwinMapper(): LogwinMapper {
+        return LogwinMapper()
     }
 }
-

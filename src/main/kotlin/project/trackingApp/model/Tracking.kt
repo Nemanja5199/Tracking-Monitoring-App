@@ -18,7 +18,7 @@ data class Tracking(
     @Column(nullable = true)
     val status: String?,
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "Text")
     val poNumber: String?,
 
     @Column(nullable = true)
