@@ -24,10 +24,33 @@ data class TrackingDTO(
     val flightNo: String? = null,
     val pickUpDate: LocalDateTime?,
     val latestCheckpoint: String? = null,
-    val sourceFilename: String
 )
 
 fun TrackingDTO.toTracking(): Tracking = Tracking(
+    status = status,
+    poNumber = poNumber,
+    etd = etd,
+    eta = eta,
+    atd = atd,
+    ata = ata,
+    packages = packages,
+    weight = weight,
+    volume = volume,
+    shipper = shipper,
+    shipperCountry = shipperCountry,
+    receiver = receiver,
+    receiverCountry = receiverCountry,
+    houseAwb = houseAwb,
+    shipperRefNo = shipperRefNo,
+    carrier = carrier,
+    incoTerm = incoTerm,
+    flightNo = flightNo,
+    pickUpDate = pickUpDate,
+    latestCheckpoint = latestCheckpoint
+)
+
+
+fun Tracking.toDTO(): TrackingDTO = TrackingDTO(
     status = status,
     poNumber = poNumber,
     etd = etd,

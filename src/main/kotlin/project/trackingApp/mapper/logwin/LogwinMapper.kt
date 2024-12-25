@@ -44,7 +44,6 @@ class LogwinMapper : BaseMapper {
                 flightNo = data[LogwinFields.VOYAGE_FLIGHT],
                 pickUpDate = null,
                 latestCheckpoint = data[LogwinFields.STATUS],
-                sourceFilename = filename
             )
         }
     }

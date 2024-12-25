@@ -8,11 +8,13 @@ import com.github.michaelbull.result.mapResult
 import com.github.michaelbull.result.runCatching
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.dto.TrackingDTO
+import project.trackingApp.dto.toDTO
 import project.trackingApp.dto.toTracking
 import project.trackingApp.error.TrackingError
 import project.trackingApp.mapper.dhl.DHLMapper
@@ -59,11 +61,14 @@ class TrackingService(
     }
 
     @Transactional
-    fun getPages(page: Int, size: Int): Result<Page<Tracking>, TrackingError> =
-        runCatching {
+    fun getPages(page: Int, size: Int): Result<Page<TrackingDTO>, TrackingError> {
+        return runCatching {
             val pageable = PageRequest.of(page, size, Sort.by("id"))
-            trackingRepository.findAll(pageable)
-        }.mapError { e ->
-            TrackingError.PageRetrievalError("Error retrieving page: ${e.message}")
+            val result = trackingRepository.findAll(pageable)
+            val dtoContent = result.content.map { it.toDTO() }
+            PageImpl(dtoContent, pageable, result.totalElements)
+        }.mapError { error ->
+            TrackingError.PageRetrievalError(error.message ?: "Failed to retrieve page")
         }
+    }
 }

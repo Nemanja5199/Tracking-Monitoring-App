@@ -22,11 +22,10 @@ class TrackingController(private val trackingService: TrackingService) {
     fun uploadFile(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("provider") provider: String
-    ): ResponseEntity<out Any> = binding {
-        val results = trackingService.processFile(file, provider).bind()
-        ResponseEntity.ok(results)
+    ): ResponseEntity< Any> = binding {
+       trackingService.processFile(file, provider).bind()
     }.mapBoth(
-        success = { response -> response },
+        success = { ResponseEntity.ok(it) },
         failure = { error ->
             when (error) {
                 is TrackingError.FileParseError ->
@@ -91,23 +90,26 @@ class TrackingController(private val trackingService: TrackingService) {
     fun getPages(
         @RequestParam(name = "page") page: Int,
         @RequestParam(name = "perpage") size: Int
-    ): ResponseEntity<out Any> = binding {
-        val result = trackingService.getPages(page, size).bind()
-    }.mapBoth(
-        success = { result ->
-            ResponseEntity.ok(result)
-        },
-        failure = { error ->
-            when (error) {
-                is TrackingError.PageRetrievalError ->
-                    ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(mapOf("message" to error.toErrorMessage()))
-                else ->
-                    ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(mapOf("message" to error.toErrorMessage()))
+    ): ResponseEntity<Any> {
+        return binding {
+         val result= trackingService.getPages(page, size).bind()
+            result
+        }.mapBoth(
+            success = {
+                ResponseEntity.ok(it)
+            },
+            failure = { error ->
+                when (error) {
+                    is TrackingError.PageRetrievalError ->
+                        ResponseEntity
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(mapOf("message" to error.toErrorMessage()))
+                    else ->
+                        ResponseEntity
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(mapOf("message" to error.toErrorMessage()))
+                }
             }
-        }
-    )
+        )
+    }
 }
