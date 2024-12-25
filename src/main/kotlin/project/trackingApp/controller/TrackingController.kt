@@ -4,6 +4,7 @@ import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.mapBoth
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -85,4 +86,28 @@ class TrackingController(private val trackingService: TrackingService) {
             }
         }
     )
+
+
+    @GetMapping
+    fun getPages(
+        @RequestParam(name="page") page: Int,
+        @RequestParam(name="perpage") size: Int
+    ): ResponseEntity<out Any> = binding {
+        val result = trackingService.getPages(page, size).bind()
+    }.mapBoth(
+        success = { result ->
+            ResponseEntity.ok(result)
+        },
+        failure = { error ->
+            when(error) {
+                is TrackingError.PageRetrievalError -> ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(mapOf("message" to error.toErrorMessage()))
+                else -> ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(mapOf("message" to error.toErrorMessage()))
+            }
+        }
+    )
+
 }

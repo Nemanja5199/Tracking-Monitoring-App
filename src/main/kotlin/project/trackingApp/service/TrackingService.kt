@@ -1,10 +1,10 @@
 package project.trackingApp.service
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.binding
-import com.github.michaelbull.result.mapResult
+import com.github.michaelbull.result.*
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.dto.TrackingDTO
@@ -13,6 +13,7 @@ import project.trackingApp.error.TrackingError
 import project.trackingApp.mapper.dhl.DHLMapper
 import project.trackingApp.mapper.hellmann.HellmannMapper
 import project.trackingApp.mapper.logwin.LogwinMapper
+import project.trackingApp.model.Tracking
 import project.trackingApp.parser.DhlParser
 import project.trackingApp.parser.HellmannParser
 import project.trackingApp.parser.LogwinParser
@@ -51,4 +52,13 @@ class TrackingService(
         trackingRepository.saveAll(entities)
         dtos
     }
+
+    @Transactional
+    fun getPages(page: Int, size: Int): Result<Page<Tracking>, TrackingError> =
+        runCatching {
+            val pageable = PageRequest.of(page, size, Sort.by("id"))
+            trackingRepository.findAll(pageable)
+        }.mapError { e ->
+            TrackingError.PageRetrievalError("Error retrieving page: ${e.message}")
+        }
 }

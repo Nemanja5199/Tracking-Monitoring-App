@@ -20,6 +20,7 @@ sealed class TrackingError {
         val field: String
     ) : TrackingError()
     data class DatabaseError(val operation: String, val message: String) : TrackingError()
+    data class PageRetrievalError(val message: String) : TrackingError()
     data class ShipmentNotFound(val trackingNumber: String) : TrackingError()
     data class InvalidShipmentData(
         val trackingNumber: String,
@@ -52,4 +53,5 @@ fun TrackingError.toErrorMessage(): String = when (this) {
     is TrackingError.UnexpectedError -> "Unexpected error: $message"
     is TrackingError.ImportFailed -> "Import failed: $message"
     is TrackingError.MissingRequiredField -> "Missing required field: $message "
+    is TrackingError.PageRetrievalError -> "Could not recive Page $message"
 }
