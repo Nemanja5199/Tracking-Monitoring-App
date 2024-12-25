@@ -87,11 +87,10 @@ class TrackingController(private val trackingService: TrackingService) {
         }
     )
 
-
     @GetMapping
     fun getPages(
-        @RequestParam(name="page") page: Int,
-        @RequestParam(name="perpage") size: Int
+        @RequestParam(name = "page") page: Int,
+        @RequestParam(name = "perpage") size: Int
     ): ResponseEntity<out Any> = binding {
         val result = trackingService.getPages(page, size).bind()
     }.mapBoth(
@@ -99,15 +98,16 @@ class TrackingController(private val trackingService: TrackingService) {
             ResponseEntity.ok(result)
         },
         failure = { error ->
-            when(error) {
-                is TrackingError.PageRetrievalError -> ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(mapOf("message" to error.toErrorMessage()))
-                else -> ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(mapOf("message" to error.toErrorMessage()))
+            when (error) {
+                is TrackingError.PageRetrievalError ->
+                    ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(mapOf("message" to error.toErrorMessage()))
+                else ->
+                    ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(mapOf("message" to error.toErrorMessage()))
             }
         }
     )
-
 }
