@@ -73,5 +73,8 @@ data class Tracking(
     val pickUpDate: LocalDateTime?,
 
     @Column(name = "latest_checkpoint", nullable = true)
-    val latestCheckpoint: String?
+    val latestCheckpoint: String?,
+
+    @Column(name = "source_filename")
+    val sourceFilename: String?
 )

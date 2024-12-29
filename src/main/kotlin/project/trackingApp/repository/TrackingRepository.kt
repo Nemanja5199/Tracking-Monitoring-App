@@ -7,10 +7,7 @@ import project.trackingApp.model.Tracking
 
 interface TrackingRepository : JpaRepository<Tracking, Long> {
 
-    fun findByHouseAwb(houseAwb: String): List<Tracking>
-    fun findByCarrier(carrier: String): List<Tracking>
-    fun findByStatus(status: String): List<Tracking>
-    fun findByReceiverContainingIgnoreCase(receiver: String): List<Tracking>
+    fun findFirstByHouseAwbAndShipperRefNo(houseAwb: String, shipperRefNo: String): Tracking
 
     override fun findAll(pageable: Pageable): Page<Tracking>
 }

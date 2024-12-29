@@ -112,4 +112,32 @@ class TrackingController(private val trackingService: TrackingService) {
             }
         )
     }
+
+
+    @GetMapping("/item")
+    fun getItem(
+        @RequestParam(name = "houseAwb") houseAwb: String,
+        @RequestParam(name = "shipperRefNo") shipperRefNo: String
+    ): ResponseEntity<Any> {
+        return binding {
+            val result= trackingService.getItem(houseAwb, shipperRefNo).bind()
+            result
+        }.mapBoth(
+            success = {
+                ResponseEntity.ok(it)
+            },
+            failure = { error ->
+                when (error) {
+                    is TrackingError.ItemNotFound ->
+                        ResponseEntity
+                            .status(HttpStatus.NOT_FOUND)
+                            .body(mapOf("message" to error.toErrorMessage()))
+                    else ->
+                        ResponseEntity
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(mapOf("message" to error.toErrorMessage()))
+                }
+            }
+        )
+    }
 }

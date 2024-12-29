@@ -45,6 +45,7 @@ class DHLMapper : BaseMapper {
                 flightNo = null,
                 pickUpDate = pickupDate,
                 latestCheckpoint = latestCheckpoint,
+                sourceFilename = filename
             )
         }
     }

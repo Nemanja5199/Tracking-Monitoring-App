@@ -40,6 +40,8 @@ class TrackingService(
     @Transactional
     fun processFile(file: MultipartFile, provider: String): Result<List<TrackingDTO>, TrackingError> = binding {
 
+
+
         val records = when (provider.lowercase()) {
             "dhl" -> dhlParser.parseFile(file)
             "hellmann" -> hellmannParser.parseFile(file)
@@ -70,5 +72,24 @@ class TrackingService(
         }.mapError { error ->
             TrackingError.PageRetrievalError(error.message ?: "Failed to retrieve page")
         }
+    }
+
+
+    fun getItem(houseAwb: String, shipperRefNo: String): Result<TrackingDTO,TrackingError>{
+
+        return  runCatching {
+            System.out.println("House AWB: " + houseAwb);
+            System.out.println("Shipper Ref No: " + shipperRefNo);
+            val result= trackingRepository.findFirstByHouseAwbAndShipperRefNo(houseAwb,shipperRefNo)
+
+            val dtoItem = result.toDTO()
+
+            dtoItem
+
+        }.mapError {
+            System.out.println(it.message);
+            TrackingError.ItemNotFound(it.message)
+        }
+
     }
 }

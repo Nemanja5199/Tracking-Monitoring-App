@@ -1,4 +1,4 @@
-// BaseMapper.kt
+
 package project.trackingApp.mapper
 
 import com.github.michaelbull.result.Err
@@ -18,6 +18,13 @@ interface BaseMapper {
     fun parseDateTime(value: String?, fieldName: String): Result<LocalDateTime?, TrackingError> {
         if (value.isNullOrBlank()) return Ok(null)
 
+        val formatters = listOf(
+            DateTimeFormatter.ofPattern("M/d/yy"),
+            DateTimeFormatter.ofPattern("dd.MM.yyyy"),
+            DateTimeFormatter.ofPattern("dd-MMM-yyyy"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        )
+
         if (value.contains(".")) {
             val days = value.substringBefore(".").toDoubleOrNull()
                 ?: return Err(
@@ -36,18 +43,20 @@ interface BaseMapper {
             )
         }
 
-        val formatter = DateTimeFormatter.ofPattern("M/d/yy")
-        return runCatching {
-            val parsedDate = LocalDate.parse(value, formatter)
-            Ok(parsedDate.atStartOfDay())
-        }.getOrElse {
-            Err(
-                TrackingError.InvalidDateFormat(
-                    field = fieldName,
-                    value = value,
-                    expectedFormat = "M/d/yy"
-                )
+        return formatters.firstNotNullOfOrNull { formatter ->
+            try {
+                val parsedDate = LocalDate.parse(value, formatter)
+                Ok(parsedDate.atStartOfDay())
+            } catch (e: Exception) {
+                null
+            }
+        } ?: Err(
+            TrackingError.InvalidDateFormat(
+                field = fieldName,
+                value = value,
+                expectedFormat = "Supported formats: M/d/yy, dd.MM.yyyy, dd-MMM-yyyy, yyyy-MM-dd"
             )
-        }
+        )
     }
 }
+

@@ -5,14 +5,12 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import org.apache.poi.EncryptedDocumentException
 import org.apache.poi.ss.formula.eval.NotImplementedException
-import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.usermodel.*
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.error.TrackingError
 import java.io.IOException
+import java.text.SimpleDateFormat
 
 @Component
 class HellmannParser : ProviderFileParser {
@@ -23,9 +21,14 @@ class HellmannParser : ProviderFileParser {
             val workbook = WorkbookFactory.create(file.inputStream)
             val sheet = workbook.getSheetAt(1)
 
+
             val headerRow = findHeaderRow(sheet)
             val headers = extractHeaders(sheet.getRow(headerRow))
             val results = parseDataRows(sheet, headerRow, headers)
+
+            if (results.isNotEmpty()) {
+                println("Sample row: ${results.first()}")
+            }
 
             Ok(results)
         }.getOrElse { e ->
@@ -75,23 +78,7 @@ class HellmannParser : ProviderFileParser {
             "House AWB",
             "Shipper Name",
             "Shipper Country",
-            "Consignee Name",
-            "Consignee Country",
-            "Departure Country",
-            "Departure Port",
-            "Destination Country",
-            "Destination Port",
-            "Incoterm",
-            "Flight No",
-            "No of Packages",
-            "Gross Weight (Kg)",
-            "Chargeable Weight (Kg)",
-            "Act. Pick Up",
-            "Flight ETD",
-            "Flight ATD",
-            "Flight ETA",
-            "Flight ATA",
-            "Act. Delivery"
+            "Consignee Name"
         )
 
         for (rowNum in 0..sheet.lastRowNum) {
@@ -120,7 +107,9 @@ class HellmannParser : ProviderFileParser {
         throw IllegalArgumentException("Could not find header row")
     }
     private fun extractHeaders(row: Row): List<String> {
-        return row.map { cell ->
+
+        return (1..row.lastCellNum).mapNotNull { cellIndex ->
+            val cell = row.getCell(cellIndex)
             when (cell?.cellType) {
                 CellType.STRING -> cell.stringCellValue.trim()
                 CellType.NUMERIC -> cell.numericCellValue.toString().trim()
@@ -156,12 +145,27 @@ class HellmannParser : ProviderFileParser {
     ): MutableMap<String, String> {
         val rowData = mutableMapOf<String, String>()
 
-        headers.forEachIndexed { index, header ->
-            val cell = dataRow.getCell(index)
+        // Start from index 1 (column B) to skip the empty first column
+        headers.forEachIndexed { headerIndex, header ->
+            // Add 1 to headerIndex to account for the empty first column
+            val cell = dataRow.getCell(headerIndex + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+
             val value = when (cell?.cellType) {
                 CellType.STRING -> cell.stringCellValue.trim()
-                CellType.NUMERIC -> cell.numericCellValue.toString().trim()
-                else -> ""
+                CellType.NUMERIC -> {
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        SimpleDateFormat("dd.MM.yyyy").format(cell.dateCellValue)
+                    } else {
+                        when {
+                            header.contains("Weight") -> String.format("%.2f", cell.numericCellValue)
+                            header == "No of Packages" -> cell.numericCellValue.toInt().toString()
+                            else -> cell.numericCellValue.toString().replace(".0", "").trim()
+                        }
+                    }
+                }
+                CellType.BLANK -> ""
+                null -> ""
+                else -> cell.toString().trim()
             }
 
             if (value.isNotBlank()) {

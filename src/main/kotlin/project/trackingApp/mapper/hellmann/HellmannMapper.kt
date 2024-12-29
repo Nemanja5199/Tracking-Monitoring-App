@@ -43,6 +43,7 @@ class HellmannMapper : BaseMapper {
                 flightNo = data[HellmannFields.FLIGHT_NO],
                 pickUpDate = pickupDate,
                 latestCheckpoint = data[HellmannFields.STATUS],
+                sourceFilename = filename
             )
         }
     }
