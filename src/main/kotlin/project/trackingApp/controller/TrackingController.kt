@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 import project.trackingApp.error.TrackingError
 import project.trackingApp.error.toErrorMessage
 import project.trackingApp.service.TrackingService
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/tracking")
@@ -116,11 +117,10 @@ class TrackingController(private val trackingService: TrackingService) {
 
     @GetMapping("/item")
     fun getItem(
-        @RequestParam(name = "houseAwb") houseAwb: String,
-        @RequestParam(name = "shipperRefNo") shipperRefNo: String
+        @RequestParam(name = "id") id: UUID,
     ): ResponseEntity<Any> {
         return binding {
-            val result= trackingService.getItem(houseAwb, shipperRefNo).bind()
+            val result= trackingService.getItem(id).bind()
             result
         }.mapBoth(
             success = {

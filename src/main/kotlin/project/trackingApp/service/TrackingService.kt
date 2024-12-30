@@ -25,6 +25,7 @@ import project.trackingApp.parser.DhlParser
 import project.trackingApp.parser.HellmannParser
 import project.trackingApp.parser.LogwinParser
 import project.trackingApp.repository.TrackingRepository
+import java.util.UUID
 
 @Service
 class TrackingService(
@@ -75,12 +76,10 @@ class TrackingService(
     }
 
 
-    fun getItem(houseAwb: String, shipperRefNo: String): Result<TrackingDTO,TrackingError>{
+    fun getItem(id: UUID,): Result<TrackingDTO,TrackingError>{
 
         return  runCatching {
-            System.out.println("House AWB: " + houseAwb);
-            System.out.println("Shipper Ref No: " + shipperRefNo);
-            val result= trackingRepository.findFirstByHouseAwbAndShipperRefNo(houseAwb,shipperRefNo)
+            val result= trackingRepository.findByid(id)
 
             val dtoItem = result.toDTO()
 

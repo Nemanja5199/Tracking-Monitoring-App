@@ -6,14 +6,16 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.LocalDateTime
+import java.util.*
 
 @Entity
 @Table(name = "tracking")
 data class Tracking(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "uuid", updatable = false)
+    val id: UUID? = null,
 
     @Column(nullable = true)
     val status: String?,

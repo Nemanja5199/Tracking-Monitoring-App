@@ -2,8 +2,10 @@ package project.trackingApp.dto
 
 import project.trackingApp.model.Tracking
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class TrackingDTO(
+    val id : UUID? = null,
     val status: String? = null,
     val poNumber: String? = null,
     val etd: LocalDateTime? = null,
@@ -28,6 +30,7 @@ data class TrackingDTO(
 )
 
 fun TrackingDTO.toTracking(): Tracking = Tracking(
+    id = id,
     status = status,
     poNumber = poNumber,
     etd = etd,
@@ -53,6 +56,7 @@ fun TrackingDTO.toTracking(): Tracking = Tracking(
 
 
 fun Tracking.toDTO(): TrackingDTO = TrackingDTO(
+    id = id ,
     status = status,
     poNumber = poNumber,
     etd = etd,
