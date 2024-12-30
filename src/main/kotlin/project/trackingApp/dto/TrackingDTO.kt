@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class TrackingDTO(
-    val id : UUID? = null,
+    val id: UUID? = null,
     val status: String? = null,
     val poNumber: String? = null,
     val etd: LocalDateTime? = null,
@@ -54,9 +54,8 @@ fun TrackingDTO.toTracking(): Tracking = Tracking(
     sourceFilename = sourceFilename
 )
 
-
 fun Tracking.toDTO(): TrackingDTO = TrackingDTO(
-    id = id ,
+    id = id,
     status = status,
     poNumber = poNumber,
     etd = etd,

@@ -24,7 +24,7 @@ class TrackingController(private val trackingService: TrackingService) {
         @RequestParam("file") file: MultipartFile,
         @RequestParam("provider") provider: String
     ): ResponseEntity< Any> = binding {
-       trackingService.processFile(file, provider).bind()
+        trackingService.processFile(file, provider).bind()
     }.mapBoth(
         success = { ResponseEntity.ok(it) },
         failure = { error ->
@@ -93,7 +93,7 @@ class TrackingController(private val trackingService: TrackingService) {
         @RequestParam(name = "perpage") size: Int
     ): ResponseEntity<Any> {
         return binding {
-         val result= trackingService.getPages(page, size).bind()
+            val result = trackingService.getPages(page, size).bind()
             result
         }.mapBoth(
             success = {
@@ -114,13 +114,12 @@ class TrackingController(private val trackingService: TrackingService) {
         )
     }
 
-
     @GetMapping("/item")
     fun getItem(
         @RequestParam(name = "id") id: UUID,
     ): ResponseEntity<Any> {
         return binding {
-            val result= trackingService.getItem(id).bind()
+            val result = trackingService.getItem(id).bind()
             result
         }.mapBoth(
             success = {

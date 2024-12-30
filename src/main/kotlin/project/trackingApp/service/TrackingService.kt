@@ -20,7 +20,6 @@ import project.trackingApp.error.TrackingError
 import project.trackingApp.mapper.dhl.DHLMapper
 import project.trackingApp.mapper.hellmann.HellmannMapper
 import project.trackingApp.mapper.logwin.LogwinMapper
-import project.trackingApp.model.Tracking
 import project.trackingApp.parser.DhlParser
 import project.trackingApp.parser.HellmannParser
 import project.trackingApp.parser.LogwinParser
@@ -40,8 +39,6 @@ class TrackingService(
 
     @Transactional
     fun processFile(file: MultipartFile, provider: String): Result<List<TrackingDTO>, TrackingError> = binding {
-
-
 
         val records = when (provider.lowercase()) {
             "dhl" -> dhlParser.parseFile(file)
@@ -75,20 +72,17 @@ class TrackingService(
         }
     }
 
+    fun getItem(id: UUID,): Result<TrackingDTO, TrackingError> {
 
-    fun getItem(id: UUID,): Result<TrackingDTO,TrackingError>{
-
-        return  runCatching {
-            val result= trackingRepository.findByid(id)
+        return runCatching {
+            val result = trackingRepository.findByid(id)
 
             val dtoItem = result.toDTO()
 
             dtoItem
-
         }.mapError {
-            System.out.println(it.message);
+            System.out.println(it.message)
             TrackingError.ItemNotFound(it.message)
         }
-
     }
 }

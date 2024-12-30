@@ -8,9 +8,7 @@ import project.trackingApp.dto.TrackingDTO
 import project.trackingApp.error.TrackingError
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 interface BaseMapper {
     fun map(data: Map<String, String>, filename: String): Result<TrackingDTO, TrackingError>
@@ -27,7 +25,6 @@ interface BaseMapper {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
             DateTimeFormatter.ofPattern("yyyy-MM-dd")
         )
-
 
         if (value.matches(Regex("^\\d+\\.?\\d*$"))) {
             val days = value.substringBefore(".").toDoubleOrNull() ?: return Err(
@@ -58,4 +55,3 @@ interface BaseMapper {
         )
     }
 }
-

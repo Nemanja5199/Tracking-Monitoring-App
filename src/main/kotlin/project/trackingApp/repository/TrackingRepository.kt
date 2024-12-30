@@ -10,7 +10,7 @@ interface TrackingRepository : JpaRepository<Tracking, Long> {
 
     fun findFirstByHouseAwbAndShipperRefNo(houseAwb: String, shipperRefNo: String): Tracking
 
-    fun findByid(id:UUID): Tracking
+    fun findByid(id: UUID): Tracking
 
     override fun findAll(pageable: Pageable): Page<Tracking>
 }
