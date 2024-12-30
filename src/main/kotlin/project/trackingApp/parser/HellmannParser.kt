@@ -19,7 +19,11 @@ class HellmannParser : ProviderFileParser {
             if (file.isEmpty) return@runCatching Err(TrackingError.FileParseError("File is empty"))
 
             val workbook = WorkbookFactory.create(file.inputStream)
-            val sheet = workbook.getSheetAt(1)
+            val sheet = runCatching {
+                workbook.getSheetAt(1)
+            }.getOrElse {
+                workbook.getSheetAt(0)
+            }
 
 
             val headerRow = findHeaderRow(sheet)

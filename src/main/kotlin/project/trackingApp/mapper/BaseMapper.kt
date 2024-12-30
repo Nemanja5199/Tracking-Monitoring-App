@@ -19,42 +19,41 @@ interface BaseMapper {
         if (value.isNullOrBlank()) return Ok(null)
 
         val formatters = listOf(
-            DateTimeFormatter.ofPattern("M/d/yy"),
+            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"),
+            DateTimeFormatter.ofPattern("dd.MM.yyyy  HH:mm:ss"),
             DateTimeFormatter.ofPattern("dd.MM.yyyy"),
+            DateTimeFormatter.ofPattern("M/d/yy"),
             DateTimeFormatter.ofPattern("dd-MMM-yyyy"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
             DateTimeFormatter.ofPattern("yyyy-MM-dd")
         )
 
-        if (value.contains(".")) {
-            val days = value.substringBefore(".").toDoubleOrNull()
-                ?: return Err(
-                    TrackingError.InvalidDateFormat(
-                        field = fieldName,
-                        value = value,
-                        expectedFormat = "Excel date format"
-                    )
-                )
 
-            val date = Date(((days - 25569) * 86400000).toLong())
-            return Ok(
-                date.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime()
+        if (value.matches(Regex("^\\d+\\.?\\d*$"))) {
+            val days = value.substringBefore(".").toDoubleOrNull() ?: return Err(
+                TrackingError.InvalidDateFormat(
+                    field = fieldName,
+                    value = value,
+                    expectedFormat = "Excel date format"
+                )
             )
+            val epoch = LocalDateTime.of(1899, 12, 30, 0, 0)
+            return Ok(epoch.plusDays(days.toLong()))
         }
 
         return formatters.firstNotNullOfOrNull { formatter ->
-            try {
+            runCatching {
+                val parsedDateTime = LocalDateTime.parse(value, formatter)
+                Ok(parsedDateTime)
+            }.getOrNull() ?: runCatching {
                 val parsedDate = LocalDate.parse(value, formatter)
                 Ok(parsedDate.atStartOfDay())
-            } catch (e: Exception) {
-                null
-            }
+            }.getOrNull()
         } ?: Err(
             TrackingError.InvalidDateFormat(
                 field = fieldName,
                 value = value,
-                expectedFormat = "Supported formats: M/d/yy, dd.MM.yyyy, dd-MMM-yyyy, yyyy-MM-dd"
+                expectedFormat = "Supported formats: dd.MM.yyyy HH:mm:ss, yyyy-MM-dd HH:mm:ss, dd.MM.yyyy, M/d/yy, dd-MMM-yyyy, yyyy-MM-dd"
             )
         )
     }

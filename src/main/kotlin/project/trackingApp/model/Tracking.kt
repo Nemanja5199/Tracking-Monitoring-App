@@ -72,7 +72,7 @@ data class Tracking(
     val flightNo: String?,
 
     @Column(name = "pick_up_date", nullable = true)
-    val pickUpDate: LocalDateTime?,
+    val pickUpDate: String?,
 
     @Column(name = "latest_checkpoint", nullable = true)
     val latestCheckpoint: String?,

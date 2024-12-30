@@ -14,7 +14,6 @@ class HellmannMapper : BaseMapper {
             ?: return Err(TrackingError.MissingRequiredField("Missing required field: House AWB"))
 
         return binding {
-            val pickupDate = parseDateTime(data[HellmannFields.PICKUP_DATE], "Pickup Date").bind()
             val etd = parseDateTime(data[HellmannFields.FLIGHT_ETD], "Flight ETD").bind()
             val eta = parseDateTime(data[HellmannFields.FLIGHT_ETA], "Flight ETA").bind()
             val atd = parseDateTime(data[HellmannFields.FLIGHT_ATD], "Flight ATD").bind()
@@ -41,7 +40,7 @@ class HellmannMapper : BaseMapper {
                 carrier = "Hellmann",
                 incoTerm = data[HellmannFields.INCOTERM],
                 flightNo = data[HellmannFields.FLIGHT_NO],
-                pickUpDate = pickupDate,
+                pickUpDate = data[HellmannFields.PICKUP_DATE],
                 latestCheckpoint = data[HellmannFields.STATUS],
                 sourceFilename = filename
             )

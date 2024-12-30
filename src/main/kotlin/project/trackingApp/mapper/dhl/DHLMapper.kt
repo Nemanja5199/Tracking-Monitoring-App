@@ -21,7 +21,6 @@ class DHLMapper : BaseMapper {
         return binding {
 
             val estimatedDelivery = parseDateTime(data[DHLFields.ESTIMATED_DELIVERY], "Estimated Delivery Date").bind()
-            val pickupDate = parseDateTime(data[DHLFields.PICKUP_DATE], "Pickup Date").bind()
             val weight = parseWeight(data[DHLFields.WEIGHT])
 
             TrackingDTO(
@@ -43,7 +42,7 @@ class DHLMapper : BaseMapper {
                 carrier = "DHL",
                 incoTerm = null,
                 flightNo = null,
-                pickUpDate = pickupDate,
+                pickUpDate = data[DHLFields.PICKUP_DATE],
                 latestCheckpoint = latestCheckpoint,
                 sourceFilename = filename
             )

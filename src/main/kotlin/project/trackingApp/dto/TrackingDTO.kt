@@ -24,7 +24,7 @@ data class TrackingDTO(
     val carrier: String? = null,
     val incoTerm: String? = null,
     val flightNo: String? = null,
-    val pickUpDate: LocalDateTime?,
+    val pickUpDate: String?,
     val latestCheckpoint: String? = null,
     val sourceFilename: String? = null,
 )
